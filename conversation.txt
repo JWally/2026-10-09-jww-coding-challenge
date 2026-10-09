@@ -1,0 +1,294 @@
+Conversation Log
+Session: 59ee5865-2a4f-46f5-8d3e-d1ae3e41706c
+Directory: /Users/justin.wolcott/dev/2026-10-09-jww-coding-challenge
+================================================================
+
+[2026-10-09 12:27:05 CDT] USER:
+Can you do me a favor please?
+
+For this session, write our conversation out into a textfile here called conversation.txt please; with timestamps and whatever.
+
+[2026-10-09 12:27:16 CDT] CLAUDE:
+I created `conversation.txt` in this directory and logged this first exchange in it with a timestamp. For the rest of the session, I'll add each of your messages and my replies to it as we go.
+
+I don't get exact message times, so the timestamps come from the system clock when I write each entry. They'll be off by a few seconds.
+
+If you'd rather have it fully automatic and exact, I can set up a hook that rebuilds the file from Claude Code's own session log after every turn.
+
+[2026-10-09 12:27:43 CDT] USER:
+yeah, set up the hook
+
+[2026-10-09 12:28:06 CDT] CLAUDE:
+Works. Now the settings file (local, since it's personal):
+
+[2026-10-09 12:28:13 CDT] CLAUDE:
+I set up the hook. It isn't live yet, though: the `.claude/` folder didn't exist when this session started, so Claude Code isn't watching it for settings. **Open `/hooks` once, or restart the session, to load it.** After that it runs on its own after every one of my replies.
+
+- **What it does:** after each reply, it rebuilds `conversation.txt` from Claude Code's session log. That means every message gets its real timestamp, and anything said before the hook loads still ends up in the file.
+- **What's in the file:** only your messages and my text replies. Tool calls, their output and system notices are left out.
+- **Files:**
+  - `.claude/hooks/write_conversation.py` is the script.
+  - `.claude/settings.local.json` is where the hook is registered. It's your personal settings file for this project, not the shared one.
+- **Tested:** I fed the script this session's log by hand. It ran cleanly and rewrote `conversation.txt` with the real timestamps.
+
+You can review or turn off the hook later in `/hooks`.
+
+[2026-10-09 12:28:50 CDT] USER:
+how to restart?
+
+[2026-10-09 12:28:52 CDT] CLAUDE:
+You don't actually need to restart. Typing `/hooks` and then closing the menu with Esc reloads the settings, which is enough.
+
+If you'd rather restart anyway:
+
+1. Exit with `/exit`, or press Ctrl+C twice.
+2. In the same folder, run `claude --continue`. That reopens this conversation, so nothing is lost.
+
+Either way, the hook will run after my next reply, and `conversation.txt` will then include this exchange too.
+
+[2026-10-09 12:30:52 CDT] USER:
+Awesome - can you install express, ts-stuff, vitest, playwright, prettier, lefthook, linters, knip, and a cognitive complexity thing please?
+Just nmp i it
+
+[2026-10-09 12:31:34 CDT] CLAUDE:
+Everything's installed. There was no `package.json` in this folder, so I created one with `npm init -y` first. npm reported 0 vulnerabilities.
+
+| For | Package(s) |
+|---|---|
+| Server | `express` (the only runtime dependency) |
+| TypeScript | `typescript`, `tsx`, `@types/node`, `@types/express` |
+| Tests | `vitest`, `@playwright/test` |
+| Formatting | `prettier` |
+| Git hooks | `lefthook` |
+| Linting | `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier` |
+| Unused code | `knip` |
+| Cognitive complexity | `eslint-plugin-sonarjs`, which has a `cognitive-complexity` rule |
+
+Everything except `express` went in as a dev dependency. I haven't set up any config files (`tsconfig.json`, an ESLint config, `lefthook.yml` and so on).
+
+Two things still need doing before some of these will work:
+- **Playwright** needs its browsers downloaded: `npx playwright install`.
+- **Lefthook** needs a git repo to install its hooks into, and this folder isn't one yet. Running `git init` and then `npx lefthook install` sets it up.
+
+I can set up the configs and those two steps if you want.
+
+[2026-10-09 12:32:22 CDT] USER:
+then install playwright here, and we can hold off on the ... actually, go ahead and git init; we can handle the git configuration later
+
+[2026-10-09 12:33:09 CDT] CLAUDE:
+I ran `git init`, so this folder is now an empty git repo with no commits. Playwright's browsers are installed too: Chromium, Firefox and WebKit, plus FFmpeg for video recording. They're stored in `~/Library/Caches/ms-playwright`, so they don't take up space in the project.
+
+Since you said to leave the git configuration for later, I haven't run `lefthook install`, and there's no `.gitignore` yet. Add one before the first commit, or `node_modules/` will get committed.
+
+[2026-10-09 12:34:11 CDT] USER:
+so on this mac, if I want to screen record and narate and what not - how do I do that? Builtin solution?
+
+[2026-10-09 12:34:18 CDT] CLAUDE:
+Yes, macOS has one built in, the Screenshot toolbar:
+
+1. Press **⌘ Shift 5**.
+2. In the toolbar, choose **Record Entire Screen** or **Record Selected Portion**.
+3. Open **Options** and pick your mic under **Microphone**, e.g. "MacBook Pro Microphone". This is what records your narration. It's set to None by default, so it's easy to miss.
+4. In the same menu, choose where to save the file (Desktop by default). You can also set a timer, or turn on **Show Mouse Clicks**, which is handy for demos.
+5. Click **Record**. To stop, click the ⏹ button in the menu bar or press **⌘ Control Esc**.
+
+You get a `.mov` file. For quick edits, open it in QuickTime Player and use **Edit → Trim** (⌘T).
+
+**QuickTime Player → File → New Screen Recording** opens the same toolbar.
+
+As far as I know, the built-in tool can't record the Mac's own sound, like app audio or a video playing. It only captures the microphone. For that you'd need a third-party tool such as OBS (free) or a virtual audio device like BlackHole. Your voice over a screen recording works fine without anything extra.
+
+[2026-10-09 12:49:57 CDT] USER:
+hey there,
+
+I need to make a simple express handler for the following types of events.
+
+I can't stress enough that we do things TDD. Nothing gets written without a failing unit test first.
+
+We installed vitest, so please use it.
+With that in mind, don't go overboard ensuring that JSON.stringified works - we can just assume that.
+Also, coding style - we want everything lean. Really lean wihtou loss of functionality.
+
+The events are going to look like this::
+
+
+
+<pasted_content id="3fb0">
+{
+  "booking_id": "bk_1042",
+  "property_id": "prop_88",
+  "status": "confirmed",
+  "sent_at": "2026-08-03T14:22:05Z"
+}
+</pasted_content id="3fb0">
+
+
+Status is one of: pending, confirmed, cancelled.
+
+The sender retries on timeout, so you'll get duplicates. Retries can also arrive out of order: a "cancelled" can land before the "confirmed" it supersedes. Your job is to end up with the latest correct state for each booking, processed exactly once. In-memory storage is fine.
+
+Also, to help make this maintanable by humans, don't get too cute with es6/ts syntactic sugar. Make it so a jr dev can maintain in the future please.
+
+Go!
+
+[2026-10-09 12:50:08 CDT] CLAUDE:
+I'll work in small red→green cycles. First, I'll check the project setup.
+
+[2026-10-09 12:50:12 CDT] CLAUDE:
+**Cycle 1: the store keeps the first event for a booking.**
+
+[2026-10-09 12:50:19 CDT] CLAUDE:
+Red (the module doesn't exist). Minimal code to pass:
+
+[2026-10-09 12:50:23 CDT] CLAUDE:
+**Cycle 2: an exact duplicate is ignored (processed once).**
+
+[2026-10-09 12:50:29 CDT] CLAUDE:
+Red. Minimal fix:
+
+[2026-10-09 12:50:33 CDT] CLAUDE:
+**Cycle 3: an older event arriving late doesn't overwrite a newer one.**
+
+[2026-10-09 12:50:41 CDT] CLAUDE:
+Red on the late-arrival case. Fix by comparing timestamps:
+
+[2026-10-09 12:50:46 CDT] CLAUDE:
+**Cycle 4: the Express handler.** Rather than install another package, I'll hit a real server with Node's built-in `fetch`.
+
+[2026-10-09 12:51:05 CDT] CLAUDE:
+Red on all three. Add validation:
+
+[2026-10-09 12:51:22 CDT] CLAUDE:
+I built the handler test-first in five cycles. In each one I watched the new test fail before writing the code to make it pass. All 9 tests pass, and the code type-checks under `strict`.
+
+**How it works**
+- **`src/bookingStore.ts`**: an in-memory `BookingStore` class. `apply(event)` keeps the event only if its `sent_at` is newer than the one already stored for that booking. A duplicate has the same `sent_at`, so it's ignored. That gives you processed-exactly-once. A late older event (for example, a `confirmed` arriving after its `cancelled`) is ignored the same way.
+- **`src/app.ts`**: `createApp(store)` sets up `POST /events`.
+  - **Bad events:** a status outside pending/confirmed/cancelled, a missing `booking_id`, or a `sent_at` that isn't a valid date gets a 400. The date check matters beyond tidiness: an invalid date becomes `NaN`, and every comparison with `NaN` is false, so a garbage event would otherwise overwrite good state.
+  - **Duplicates and stale events:** these return 200 anyway, because a non-2xx would make the sender keep retrying.
+- **Tests:** `src/bookingStore.test.ts` covers the ordering rules. `src/app.test.ts` starts a real server and calls it with Node's built-in `fetch`, so I didn't need to install another package.
+- `npm test` now runs vitest.
+
+I kept the style plain for maintainability: a class, `function` callbacks, and string concatenation instead of template literals. The only shortcut is the `{ ...validEvent }` object spread in the tests.
+
+**Decisions for you**
+- **Same `sent_at`, different status:** I treat it as a duplicate and keep whichever arrived first. If you'd rather break ties by status (cancelled beats confirmed beats pending), that's one test and about three lines.
+- **Request that isn't JSON:** if a request doesn't send a JSON content type, `req.body` is undefined and the handler fails with a 500 instead of a 400. Fixing that needs one more test and a one-line guard. I didn't add it because it wasn't asked for.
+- **No server entry point:** nothing calls `listen()` yet. The tests don't need one, but you will to actually run the server.
+
+[2026-10-09 12:52:37 CDT] USER:
+Also, after the scaffolding is built out, we want to have an easy to maintain case testing json/file thing.
+
+We should be able to put in mock events in an array which get flushed through the API; and the processed events will be verified against a known array of events and whether or not they were processed.
+
+[2026-10-09 12:52:54 CDT] CLAUDE:
+The cases need to know whether each event was processed, but right now the API returns a bare 200 for both "processed" and "ignored duplicate". So I'll write the case runner first as the failing test, then have the API return `{ "processed": true/false }` to make it pass.
+
+[2026-10-09 12:53:07 CDT] CLAUDE:
+Red for the right reason: the API doesn't report `processed` yet. Make it:
+
+[2026-10-09 12:53:16 CDT] CLAUDE:
+Quick check that the runner catches a wrong expectation, not just a crash:
+
+[2026-10-09 12:53:25 CDT] CLAUDE:
+You can now add test cases by editing a JSON file, no code changes needed. All 14 tests pass. I also checked that the runner catches a wrong expectation: I temporarily put a wrong final status in one case, saw that case fail with a clear message, then put it back.
+
+**Adding a case**: append an object to `src/eventCases.json`:
+
+```json
+{
+  "name": "a cancelled that arrives before its confirmed wins",
+  "events": [
+    { "processed": true,  "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "cancelled", "sent_at": "2026-08-03T15:00:00Z" } },
+    { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:00:00Z" } }
+  ],
+  "finalStatus": { "bk_1": "cancelled" }
+}
+```
+
+- `events` are sent through the real API in order. Each one is checked against its `processed` flag.
+- `finalStatus` is the status each booking should end up with after all events are in.
+- Each case starts with an empty store, so cases can't affect each other.
+
+The runner is `src/eventCases.test.ts`. I wrote it first; it failed because the API gave no processed/not-processed answer.
+
+**API change:** to make it pass, the endpoint now responds with `{ "processed": true }` or `{ "processed": false }`.
+- 200 with `true` for a new or newer event.
+- 200 with `false` for a duplicate or out-of-date event.
+- 400 with `false` for an invalid event.
+
+The status codes are the same as before; the body is new.
+
+I seeded five cases: a new event, a retried duplicate, cancelled arriving before confirmed, two bookings at once, and an invalid status.
+
+[2026-10-09 12:53:25 CDT] USER:
+Also, duplicates with the same sent at are ok to ignore; but if 2 events land at the same time, the following order should take priority.
+
+confirmed > cancelled > pending
+
+[2026-10-09 12:53:32 CDT] CLAUDE:
+Same `sent_at` with a different status will now be decided by priority: confirmed > cancelled > pending. A true duplicate (same time, same status) is still ignored. Failing tests first:
+
+[2026-10-09 12:53:39 CDT] CLAUDE:
+Red: when the lower-priority status lands first, the higher one is wrongly ignored. Implement:
+
+[2026-10-09 12:53:46 CDT] CLAUDE:
+Green. Refactor: the list of statuses now lives in two places, so `app.ts` will read it from the priority table:
+
+[2026-10-09 12:53:57 CDT] CLAUDE:
+The tie-break is done. Next, building out the JSON cases as you asked: a normal in-order lifecycle, plus several that arrive out of order.
+
+[2026-10-09 12:54:44 CDT] CLAUDE:
+Both pieces are in, and all 27 tests pass (`npm test`). Your three follow-ups (in order, duplicates, out of order) are all covered in the JSON file; the out-of-order and duplicate cases were already there by the time your last message arrived.
+
+**Tie-break.** When two events have the same `sent_at`, the status now decides: confirmed > cancelled > pending, whichever one arrives first. I wrote 3 failing unit tests first, then added a small `STATUS_PRIORITY` table and an `isNewer()` function in `src/bookingStore.ts`. Same `sent_at` with the same status is still ignored as a duplicate. After the tests passed, I changed `app.ts` to take its list of valid statuses from that table, so the statuses live in one place.
+
+**`src/eventCases.json`** now has 15 cases. Each name starts with its group:
+
+| Group | Cases |
+|---|---|
+| **in order** | single event · pending→confirmed · pending→confirmed→cancelled · two separate bookings |
+| **out of order** | cancelled before confirmed · confirmed before pending · whole lifecycle reversed · whole lifecycle scrambled |
+| **duplicates** | a single retry · every event in a normal flow retried · an old retry arriving after a newer event · out of order with retries mixed in · two bookings interleaved, out of order, with retries |
+| **same sent_at** | confirmed beats a cancelled that arrived first, and pending loses to both |
+| **invalid** | unknown status is rejected |
+
+To add a case, copy a block, change the events and their `processed` flags, and set `finalStatus`. No code changes are needed.
+
+All of these new cases passed as soon as I added them, with no code changes needed. They document how the handler already behaves; none of them was a failing test first.
+
+[2026-10-09 12:54:55 CDT] USER:
+we also need some sanity checks; also, we want to tie all of the events for the booking, events for different bookins land on different booking event things
+
+[2026-10-09 12:54:59 CDT] CLAUDE:
+Two parts of this could mean different things, so I'll check before building.
+
+[2026-10-09 12:56:13 CDT] CLAUDE:
+Red. Each booking now gets one record holding its current state and its full history:
+
+[2026-10-09 12:56:21 CDT] CLAUDE:
+Green. Now the stricter input checks, starting with failing tests:
+
+[2026-10-09 12:56:29 CDT] CLAUDE:
+Four fail. Two of my new tests (numeric `sent_at` and array body) already passed: the existing checks happen to reject them. I'll keep them as guards.
+
+[2026-10-09 12:56:40 CDT] CLAUDE:
+Both changes are in, built test-first, and all 36 tests pass. The code also type-checks under `strict`.
+
+**Each booking keeps every event it receives.**
+- In `src/bookingStore.ts`, each booking is now a single record holding its current state and a `history` of every event that arrived for it, in arrival order. Each entry is marked `processed: true` or `false`, so duplicates and stale events stay in the trail but don't change the state.
+- Each booking has its own record, so events for different bookings never mix. One test sends events for `bk_1` and `bk_2` and checks that each history holds only its own events.
+- There's a new `store.getHistory(bookingId)`, which returns an empty list for a booking it has never seen. `store.get(bookingId)` still returns the current state.
+
+**Stricter input checks.** These now get a 400:
+- a missing or blank (e.g. `"   "`) `booking_id` or `property_id`
+- a request that isn't sent as JSON. This used to crash the handler with a 500.
+
+I also added tests for a numeric `sent_at` and for a JSON array instead of an object. Those were already rejected, so they passed straight away; they're there to stop someone breaking it later.
+
+Two things to know:
+- **Rejected events aren't in any history.** They never reach the store. An event with no `booking_id` couldn't be tied to a booking anyway.
+- **The history isn't available over HTTP yet,** only through `getHistory()` in code. A `GET /bookings/:id` endpoint would be a small addition if you want it.
+
+[2026-10-09 12:57:09 CDT] USER:
+run tests and show results here

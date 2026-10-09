@@ -1,0 +1,134 @@
+[
+  {
+    "name": "in order: a single new event is processed",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "pending" }
+  },
+  {
+    "name": "in order: pending then confirmed",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "confirmed" }
+  },
+  {
+    "name": "in order: pending, confirmed, then cancelled",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "cancelled", "sent_at": "2026-08-03T14:10:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "cancelled" }
+  },
+  {
+    "name": "in order: different bookings do not affect each other",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_2", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "confirmed", "bk_2": "pending" }
+  },
+  {
+    "name": "out of order: a cancelled that arrives before its confirmed wins",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "cancelled", "sent_at": "2026-08-03T14:10:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "cancelled" }
+  },
+  {
+    "name": "out of order: confirmed arrives before pending",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "confirmed" }
+  },
+  {
+    "name": "out of order: whole lifecycle arrives in reverse",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "cancelled", "sent_at": "2026-08-03T14:10:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "cancelled" }
+  },
+  {
+    "name": "out of order: whole lifecycle arrives scrambled",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "cancelled", "sent_at": "2026-08-03T14:10:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "cancelled" }
+  },
+  {
+    "name": "duplicates: a retried duplicate is processed only once",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "confirmed" }
+  },
+  {
+    "name": "duplicates: every event in a normal flow is retried",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "confirmed" }
+  },
+  {
+    "name": "duplicates: a retry of an older event arrives after a newer one",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "confirmed" }
+  },
+  {
+    "name": "duplicates: out of order with retries mixed in",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "cancelled", "sent_at": "2026-08-03T14:10:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "cancelled", "sent_at": "2026-08-03T14:10:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "cancelled" }
+  },
+  {
+    "name": "duplicates: two bookings interleaved, out of order, with retries",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_2", "property_id": "prop_42", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_2", "property_id": "prop_42", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_2", "property_id": "prop_42", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:05:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "confirmed", "bk_2": "confirmed" }
+  },
+  {
+    "name": "same sent_at: confirmed beats an earlier-arriving cancelled, and pending loses to both",
+    "events": [
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "cancelled", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": true, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "confirmed", "sent_at": "2026-08-03T14:00:00Z" } },
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "pending", "sent_at": "2026-08-03T14:00:00Z" } }
+    ],
+    "finalStatus": { "bk_1": "confirmed" }
+  },
+  {
+    "name": "invalid: an event with an unknown status is rejected",
+    "events": [
+      { "processed": false, "event": { "booking_id": "bk_1", "property_id": "prop_88", "status": "shipped", "sent_at": "2026-08-03T14:00:00Z" } }
+    ],
+    "finalStatus": {}
+  }
+]
